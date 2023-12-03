@@ -23,6 +23,7 @@ spelt_numbers = {
     'nine': 9
 }
 
+
 def get_first_and_last_digit(text):
     first_digit = None
     last_digit = None
@@ -70,11 +71,10 @@ def calculate_sum_of_first_and_last_digits(lines):
     return sum
 
 
-
 if __name__ == '__main__':
-    #dataFormatter = DataFormatter.DataFormatter('firstStarData.dat')
-    #data = dataFormatter.get_formatted_data_for_first_star()
-    #print(calculate_sum_of_first_and_last_digits(data))
+    # dataFormatter = DataFormatter.DataFormatter('firstStarData.dat')
+    # data = dataFormatter.get_formatted_data_for_first_star()
+    # print(calculate_sum_of_first_and_last_digits(data))
 
     dataFormatter = DataFormatter.DataFormatter('firstStarData.dat')
     data = dataFormatter.get_formatted_data_for_first_star()
