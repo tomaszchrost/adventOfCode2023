@@ -6,6 +6,7 @@ class DataParser:
     UNICODE_VALUE_0 = 48
     UNICODE_VALUE_9 = 57
     UNICODE_VALUE_FULL_STOP = 46
+    UNICODE_VALUE_STAR = 42
 
     def __init__(self, file_name):
         self.file_name = file_name
@@ -28,6 +29,8 @@ class DataParser:
                     engine_schematic_row.append(SchematicSpace(has_symbol=False, value=int(character)))
                 elif unicode_value == self.UNICODE_VALUE_FULL_STOP:
                     engine_schematic_row.append(SchematicSpace(has_symbol=False, value=None))
+                elif unicode_value == self.UNICODE_VALUE_STAR:
+                    engine_schematic_row.append(SchematicSpace(has_symbol=True, value=None, is_gear=True))
                 else:
                     engine_schematic_row.append(SchematicSpace(has_symbol=True, value=None))
             data.engine_schematic.append(engine_schematic_row)
