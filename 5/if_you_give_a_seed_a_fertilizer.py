@@ -29,9 +29,9 @@ class IfYouGiveASeedAFertilizer:
 
     @staticmethod
     def map_value_ranges(seed_mapped_values: SeedMappedValues, mappings: List[SourceDestinationRange]):
+        mappings = IfYouGiveASeedAFertilizer.add_missing_mappings(mappings)
+        new_seed_mappings = []
         for mapping in mappings:
-
-            new_seed_mappings = []
             for seed_mapping in seed_mapped_values.seed_mappings:
 
                 # get actual start and end of mapping after mapping is applied
@@ -49,21 +49,23 @@ class IfYouGiveASeedAFertilizer:
                     new_seed_mapping = SeedMapping(start_range, end_range, difference)
                     new_seed_mappings.append(new_seed_mapping)
 
-                    if start_range > seed_mapping.start_value:
-                        lower_range_seed_mapping = SeedMapping(seed_mapping.start_value, start_range - 1,
-                                                               seed_mapping.map_by)
+        seed_mapped_values.seed_mappings = new_seed_mappings
 
-                        new_seed_mappings.append(lower_range_seed_mapping)
-
-                    if end_range < seed_mapping.end_value:
-                        upper_range_seed_mapping = SeedMapping(end_range + 1, new_seed_mapping.end_value,
-                                                               seed_mapping.map_by)
-                        new_seed_mappings.append(upper_range_seed_mapping)
-
-                else:
-                    new_seed_mappings.append(seed_mapping)
-
-            seed_mapped_values.seed_mappings = new_seed_mappings
+    @staticmethod
+    def add_missing_mappings(mappings: List[SourceDestinationRange]):
+        mappings.sort(key=lambda x: x.source_range_start)
+        new_mappings = mappings.copy()
+        if mappings[0].source_range_start != 0:
+            new_mappings.append(SourceDestinationRange(0, 0, mappings[0].source_range_start))
+        for i in range(1, len(mappings) - 1):
+            range_between_sources = mappings[i+1].source_range_start - mappings[i].source_range_end
+            if range_between_sources > 1:
+                new_mappings.append(SourceDestinationRange(
+                    mappings[i].source_range_end + 1,
+                    mappings[i].source_range_end + 1,
+                    range_between_sources))
+        new_mappings.append(SourceDestinationRange(mappings[-1].source_range_end + 1, mappings[-1].source_range_end + 1, math.inf))
+        return new_mappings
 
     def get_min_location_for_seed_ranges(self):
         seed_mapped_values_list = []

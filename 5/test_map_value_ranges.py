@@ -14,16 +14,18 @@ def test_map_value_ranges_in_the_middle():
     if_you_give_a_seed_a_fertilizer.map_value_ranges(seed_mapped_values, [source_destination_range])
 
     assert seed_mapped_values.seed_mappings[0].start_value == 22
-    assert seed_mapped_values.seed_mappings[0].end_value == 42
+    assert seed_mapped_values.seed_mappings[0].end_value == 41
     assert seed_mapped_values.seed_mappings[0].map_by == 18
 
     assert seed_mapped_values.seed_mappings[1].start_value == 10
     assert seed_mapped_values.seed_mappings[1].end_value == 21
     assert seed_mapped_values.seed_mappings[1].map_by == 8
 
-    assert seed_mapped_values.seed_mappings[2].start_value == 43
+    assert seed_mapped_values.seed_mappings[2].start_value == 42
     assert seed_mapped_values.seed_mappings[2].end_value == 100
     assert seed_mapped_values.seed_mappings[2].map_by == 8
+
+    assert len(seed_mapped_values.seed_mappings)
 
 
 def test_map_value_ranges_above_range():
@@ -56,10 +58,10 @@ def test_map_value_ranges_below_range():
     if_you_give_a_seed_a_fertilizer.map_value_ranges(seed_mapped_values, [source_destination_range])
 
     assert seed_mapped_values.seed_mappings[0].start_value == 30
-    assert seed_mapped_values.seed_mappings[0].end_value == 42
+    assert seed_mapped_values.seed_mappings[0].end_value == 41
     assert seed_mapped_values.seed_mappings[0].map_by == 18
 
-    assert seed_mapped_values.seed_mappings[1].start_value == 43
+    assert seed_mapped_values.seed_mappings[1].start_value == 42
     assert seed_mapped_values.seed_mappings[1].end_value == 100
     assert seed_mapped_values.seed_mappings[1].map_by == 8
 
@@ -95,3 +97,31 @@ def test_map_value_ranges_fully_in_range():
     assert seed_mapped_values.seed_mappings[0].map_by == 18
 
     assert len(seed_mapped_values.seed_mappings) == 1
+
+def test_multiple_ranges():
+    seed_mapped_values = SeedMappedValues()
+    seed_mapped_values.seed_mappings.append(SeedMapping(10, 100, 8))
+    source_destination_range = SourceDestinationRange(30, 40, 20)
+    second_source_destination_range = SourceDestinationRange(50, 70, 5)
+
+    if_you_give_a_seed_a_fertilizer = IfYouGiveASeedAFertilizer(None)
+
+    if_you_give_a_seed_a_fertilizer.map_value_ranges(seed_mapped_values,
+                                                     [source_destination_range,
+                                                      second_source_destination_range])
+
+    assert seed_mapped_values.seed_mappings[0].start_value == 22
+    assert seed_mapped_values.seed_mappings[0].end_value == 41
+    assert seed_mapped_values.seed_mappings[0].map_by == 18
+
+    assert seed_mapped_values.seed_mappings[1].start_value == 42
+    assert seed_mapped_values.seed_mappings[1].end_value == 46
+    assert seed_mapped_values.seed_mappings[1].map_by == 28
+
+    assert seed_mapped_values.seed_mappings[2].start_value == 10
+    assert seed_mapped_values.seed_mappings[2].end_value == 21
+    assert seed_mapped_values.seed_mappings[2].map_by == 8
+
+    assert seed_mapped_values.seed_mappings[3].start_value == 47
+    assert seed_mapped_values.seed_mappings[3].end_value == 100
+    assert seed_mapped_values.seed_mappings[3].map_by == 8
