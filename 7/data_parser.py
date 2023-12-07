@@ -45,7 +45,7 @@ class DataParser:
                 if card == "T":
                     hand.append(10)
                 elif card == "J":
-                    hand.append(11)
+                    hand.append(1)
                 elif card == "Q":
                     hand.append(12)
                 elif card == "K":
@@ -54,6 +54,6 @@ class DataParser:
                     hand.append(14)
                 else:
                     hand.append(int(card))
-            data_row = DataRow(Hand(hand), bid)
+            data_row = DataRow(Hand(hand), bid, hand_string)
             data_rows.append(data_row)
         self.data = Data(data_rows)

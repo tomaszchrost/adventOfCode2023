@@ -10,7 +10,13 @@ class Hand:
         self._calculate_card_counts()
 
     def _calculate_card_counts(self):
-        self.card_counts = heapq.nlargest(2, collections.Counter(self.card_values).values())
+        card_values = [i for i in self.card_values if i != 1]
+        self.card_counts = heapq.nlargest(2, collections.Counter(card_values).values())
+        if len(self.card_counts) < 1:
+            self.card_counts.append(0)
+        self.card_counts[0] += self.card_values.count(1)
+        if len(self.card_counts) < 2:
+            self.card_counts.append(0)
 
     def __lt__(self, other: Hand):
         max_counts = self.card_counts
