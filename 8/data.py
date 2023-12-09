@@ -60,5 +60,5 @@ class Data:
                 if next_node.node_name == node.right_node_name:
                     node.right_node = next_node
 
-
-
+    def reset_instructions(self):
+        self._instruction_step = 0

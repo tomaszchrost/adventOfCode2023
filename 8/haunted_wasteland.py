@@ -1,3 +1,4 @@
+import math
 import typing
 
 from data import Data
@@ -20,21 +21,23 @@ class HauntedWasteland:
         return steps
 
     @staticmethod
-    def all_nodes_are_end_nodes(nodes):
-        for node in nodes:
-            if node.node_name[2] != "Z":
-                return False
+    def node_is_end_node(node):
+        if node.node_name[2] != "Z":
+            return False
         return True
 
     def get_ghost_step_count(self):
-        current_nodes: typing.List[Node] = self.data.get_starting_nodes()
-        steps = 0
-        while not self.all_nodes_are_end_nodes(current_nodes):
-            instruction: Instruction = self.data.get_next_instruction()
-            for i in range(len(current_nodes)):
-                current_nodes[i] = self.data.traverse(current_nodes[i], instruction)
-            steps += 1
-        return steps
+        starting_nodes: typing.List[Node] = self.data.get_starting_nodes()
+        steps_to_reach_end = []
+        for node in starting_nodes:
+            steps = 0
+            self.data.reset_instructions()
+            while not self.node_is_end_node(node):
+                instruction: Instruction = self.data.get_next_instruction()
+                node = self.data.traverse(node, instruction)
+                steps += 1
+            steps_to_reach_end.append(steps)
+        return math.lcm(*steps_to_reach_end)
 
 
 def main():
