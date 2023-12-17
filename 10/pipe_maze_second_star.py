@@ -108,20 +108,27 @@ class PipeMaze:
             not_enclosed_locations.append((i, j))
             list_index = list_utils.ListIndex(i, j)
             orthogonal_adjacent_locations = list_utils.get_orthogonal_locations(list_index, self.data.pipes)
-            for list_index in orthogonal_adjacent_locations:
-                self._find_not_enclosed_locations(not_enclosed_locations, visited_locations, list_index.i, list_index.j)
+            return [(x.i, x.j) for x in orthogonal_adjacent_locations]
         else:
-            return
+            return []
 
     def find_not_enclosed_locations(self):
         not_enclosed_locations = []
         visited_locations = self.get_visited_locations()
+
+        locations_to_check = []
         for i in range(0, len(self.data.pipes)):
             for j in [0, len(self.data.pipes[i]) - 1]:
-                self._find_not_enclosed_locations(not_enclosed_locations, visited_locations, i, j)
+                locations_to_check.append((i, j))
         for j in range(0, len(self.data.pipes[0])):
             for i in [0, len(self.data.pipes) - 1]:
-                self._find_not_enclosed_locations(not_enclosed_locations, visited_locations, i, j)
+                locations_to_check.append((i, j))
+
+        while len(locations_to_check) > 0:
+            i = locations_to_check[0][0]
+            j = locations_to_check[0][1]
+            locations_to_check.extend(self._find_not_enclosed_locations(not_enclosed_locations, visited_locations, i, j))
+            locations_to_check.pop(0)
 
         count = 0
         for i in range(0, len(self.data.pipes)):
