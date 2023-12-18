@@ -9,4 +9,4 @@ class Pipe(enum.Enum):
     NINETY_DEGREE_PIPE_SOUTH_AND_EAST = "F"
     GROUND = "."
     STARTING_POSITION = "S"
-
+    EXPANDED_POINT = "X"

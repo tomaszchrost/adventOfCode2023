@@ -5,6 +5,34 @@ import utils.list_utils as list_utils
 
 class PipeMaze:
 
+    WEST_CONNECTING_PIPES = (
+        Pipe.HORIZONTAL_PIPE,
+        Pipe.NINETY_DEGREE_PIPE_NORTH_AND_WEST,
+        Pipe.NINETY_DEGREE_PIPE_SOUTH_AND_WEST,
+        Pipe.STARTING_POSITION
+    )
+
+    EAST_CONNECTING_PIPES = (
+        Pipe.HORIZONTAL_PIPE,
+        Pipe.NINETY_DEGREE_PIPE_SOUTH_AND_EAST,
+        Pipe.NINETY_DEGREE_PIPE_NORTH_AND_EAST,
+        Pipe.STARTING_POSITION
+    )
+
+    NORTH_CONNECTING_PIPES = (
+        Pipe.VERTICAL_PIPE,
+        Pipe.NINETY_DEGREE_PIPE_NORTH_AND_EAST,
+        Pipe.NINETY_DEGREE_PIPE_NORTH_AND_WEST,
+        Pipe.STARTING_POSITION
+    )
+
+    SOUTH_CONNECTING_PIPES = (
+        Pipe.VERTICAL_PIPE,
+        Pipe.NINETY_DEGREE_PIPE_SOUTH_AND_EAST,
+        Pipe.NINETY_DEGREE_PIPE_SOUTH_AND_WEST,
+        Pipe.STARTING_POSITION
+    )
+
     def __init__(self, data):
         self.data: Data = data
 
@@ -133,17 +161,75 @@ class PipeMaze:
         count = 0
         for i in range(0, len(self.data.pipes)):
             for j in range(0, len(self.data.pipes[i])):
-                if (i, j) not in visited_locations and (i, j) not in not_enclosed_locations:
+                if (i, j) not in visited_locations and (i, j) not in not_enclosed_locations and self.data.pipes[i][j] != Pipe.EXPANDED_POINT:
                     count += 1
-
+                    print('\033[92m' + self.data.pipes[i][j].value + '\033[0m', end="")
+                else:
+                    print(self.data.pipes[i][j].value, end="")
+            print()
         return count
+
+    def expand_data(self):
+        new_data = []
+        new_data_row = [Pipe.EXPANDED_POINT]
+        for j in range(0, len(self.data.pipes[0])):
+            if self.data.pipes[0][j] in self.NORTH_CONNECTING_PIPES:
+                new_data_row.append(Pipe.VERTICAL_PIPE)
+            else:
+                new_data_row.append(Pipe.EXPANDED_POINT)
+            new_data_row.append(Pipe.EXPANDED_POINT)
+        new_data.append(new_data_row)
+
+        for i in range(0, len(self.data.pipes) - 1):
+            new_data_row = []
+            if self.data.pipes[i][0] in self.WEST_CONNECTING_PIPES:
+                new_data_row.append(Pipe.HORIZONTAL_PIPE)
+            else:
+                new_data_row.append(Pipe.EXPANDED_POINT)
+
+            for j in range(0, len(self.data.pipes[i]) - 1):
+                new_data_row.append(self.data.pipes[i][j])
+                if (self.data.pipes[i][j] in self.EAST_CONNECTING_PIPES
+                        and self.data.pipes[i][j + 1] in self.WEST_CONNECTING_PIPES):
+                    new_data_row.append(Pipe.HORIZONTAL_PIPE)
+                else:
+                    new_data_row.append(Pipe.EXPANDED_POINT)
+
+            new_data_row.append(self.data.pipes[i][-1])
+            if self.data.pipes[i][-1] in self.EAST_CONNECTING_PIPES:
+                new_data_row.append(Pipe.HORIZONTAL_PIPE)
+            else:
+                new_data_row.append(Pipe.EXPANDED_POINT)
+            new_data.append(new_data_row)
+
+            new_data_row = [Pipe.EXPANDED_POINT]
+            for j in range(0, len(self.data.pipes[0])):
+                if (self.data.pipes[i][j] in self.SOUTH_CONNECTING_PIPES
+                        and self.data.pipes[i + 1][j] in self.NORTH_CONNECTING_PIPES):
+                    new_data_row.append(Pipe.VERTICAL_PIPE)
+                else:
+                    new_data_row.append(Pipe.EXPANDED_POINT)
+                new_data_row.append(Pipe.EXPANDED_POINT)
+            new_data.append(new_data_row)
+
+        new_data_row = [Pipe.EXPANDED_POINT]
+        for j in range(0, len(self.data.pipes[-1])):
+            if self.data.pipes[-1][j] in self.SOUTH_CONNECTING_PIPES:
+                new_data_row.append(Pipe.VERTICAL_PIPE)
+            else:
+                new_data_row.append(Pipe.EXPANDED_POINT)
+            new_data_row.append(Pipe.EXPANDED_POINT)
+        new_data.append(new_data_row)
+
+        self.data.pipes = new_data
+
 
 
 def main():
     data_parser = DataParser("data.dat")
     data = data_parser.get_data()
     pipe_maze = PipeMaze(data)
-
+    pipe_maze.expand_data()
     print(pipe_maze.find_not_enclosed_locations())
 
 
